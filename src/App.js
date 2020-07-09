@@ -1,21 +1,24 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import UserInput from './components/UserInput/UserInput';
+import UserOutput from './components/UserOutput/UserOutput';
 
-class App extends Component {
-  render() {
+const app = () => {
+
+    const [username, setUsername]= useState("walter.manias");
+
+    const changeNameHandler = (event) => {
+      setUsername(event.target.value)
+    }
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <UserInput username={username} changed={changeNameHandler.bind(this)}></UserInput>
+        <UserOutput username={username}></UserOutput>
+        <UserOutput username={username}></UserOutput>
+        <UserOutput username={username}></UserOutput>
       </div>
     );
-  }
 }
 
-export default App;
+export default app;
