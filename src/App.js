@@ -1,12 +1,13 @@
 import React from 'react';
-import './App.css';
-
+import Layout from './components/Layout/Layout';
 
 const app = () => {
 
   return (
     <div>
-
+      <Layout>
+        <p> It works!</p>
+      </Layout>
     </div>
   );
 }
