@@ -60,7 +60,7 @@ jobs:
                   name: Webpack Development Build
                   command: yarn build
             - upload-to-s3:
-                  distribution_id: 'E1NNXOVY2LGIAG'
+                  distribution_id: ${DISTRIBUTION_ID_STAGING}
 
 workflows:
     build-deploy:
