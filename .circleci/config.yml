@@ -1,0 +1,62 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+orbs:
+    # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
+    # Orbs reduce the amount of configuration required for common tasks.
+    # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
+    node: circleci/node@4.5.1
+    aws-s3: circleci/aws-s3@2.0.0
+
+executors:
+    start-docker:
+        docker:
+            - image: cimg/node:15.1
+
+commands:
+    install-dependencies:
+        steps:
+            - checkout
+            - node/install: # Enforce yarn usage
+                  install-npm: false
+                  install-yarn: true
+            - restore_cache:
+                  name: Restore Yarn Package Cache
+                  keys:
+                      - yarn-packages-{{ checksum "yarn.lock" }}
+            - run:
+                  name: Install Dependencies
+                  command: yarn install --immutable
+            - save_cache:
+                  name: Save Yarn Package Cache
+                  key: yarn-packages-{{ checksum "yarn.lock" }}
+                  paths:
+                      - .yarn/cache
+                      - .yarn/unplugged
+    upload-to-s3:
+        steps:
+            - aws-s3/copy:
+                  arguments: '--recursive'
+                  from: 'build/'
+                  to: 's3://waltermanias.com'
+
+jobs:
+
+    # Deployment job for 'development' environment
+    development-build-deploy:
+        executor: start-docker
+        steps:
+            - install-dependencies
+            - run:
+                  name: Webpack Development Build
+                  command: yarn build
+            - upload-to-s3
+workflows:
+    build-deploy:
+        jobs:
+            - development-build-deploy:
+                  filters:
+                      branches:
+                          only:
+                              - master
