@@ -42,7 +42,6 @@ commands:
                   to: 's3://waltermanias.com'
 
 jobs:
-
     # Deployment job for 'development' environment
     development-build-deploy:
         executor: start-docker
