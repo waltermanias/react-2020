@@ -35,6 +35,9 @@ commands:
                       - .yarn/cache
                       - .yarn/unplugged
     upload-to-s3:
+        parameters:
+            distribution_id:
+                type: string
         steps:
             - aws-s3/copy:
                   arguments: '--recursive'
@@ -44,7 +47,7 @@ commands:
                   name: Deploying Client to S3 and Cloudfront
                   command: |
                     aws configure set preview.cloudfront true  # Turn on cloudfront in AWS CLI  
-                    aws cloudfront create-invalidation --distribution-id E1NNXOVY2LGIAG --paths /\*
+                    aws cloudfront create-invalidation --distribution-id <<parameters.distribution_id>> --paths /\*
 
 jobs:
 
@@ -56,7 +59,8 @@ jobs:
             - run:
                   name: Webpack Development Build
                   command: yarn build
-            - upload-to-s3
+            - upload-to-s3:
+                  distribution_id: 'E1NNXOVY2LGIAG'
 
 workflows:
     build-deploy:
